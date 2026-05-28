@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SubjectMapper">
+
+    <resultMap type="Subject" id="SubjectResult">
+    	<id     property="id"            column="id"            />
+        <result property="subjectCode"    column="subject_code"    />
+        <result property="subjectName"    column="subject_name"    />
+        <result property="remark"         column="remark"         />
+        <result property="createBy"       column="create_by"       />
+        <result property="createTime"     column="create_time"     />
+        <result property="updateBy"       column="update_by"       />
+        <result property="updateTime"     column="update_time"     />
+    </resultMap>
+    
+    <sql id="selectSubjectVo">
+        select id, subject_code, subject_name, remark, create_by, create_time, update_by, update_time 
+		from edu_subject
+    </sql>
+    
+    <select id="selectSubjectById" parameterType="Long" resultMap="SubjectResult">
+        <include refid="selectSubjectVo"/>
+        where id = #{id}
+    </select>
+    
+    <select id="selectSubjectByCode" parameterType="String" resultMap="SubjectResult">
+        <include refid="selectSubjectVo"/>
+        where subject_code = #{subjectCode}
+    </select>
+    
+    <select id="selectSubjectByName" parameterType="String" resultMap="SubjectResult">
+        <include refid="selectSubjectVo"/>
+        where subject_name = #{subjectName}
+    </select>
+    
+    <select id="selectSubjectList" parameterType="Subject" resultMap="SubjectResult">
+        <include refid="selectSubjectVo"/>
+        <where>
+			<if test="subjectName != null and subjectName != ''">
+				AND subject_name like concat('%', #{subjectName}, '%')
+			</if>
+			<if test="subjectCode != null and subjectCode != ''">
+				AND subject_code like concat('%', #{subjectCode}, '%')
+			</if>
+		</where>
+        order by create_time desc
+    </select>
+    
+    <select id="checkSubjectCodeUnique" parameterType="String" resultType="int">
+        select count(1) from edu_subject where subject_code = #{subjectCode}
+    </select>
+    
+    <select id="checkSubjectNameUnique" parameterType="String" resultType="int">
+        select count(1) from edu_subject where subject_name = #{subjectName}
+    </select>
+    
+    <select id="countStudentBySubjectId" parameterType="Long" resultType="int">
+        select count(1) from edu_subject where subject_id = #{subjectId}
+    </select>
+    
+    <select id="countTeacherBySubjectId" parameterType="Long" resultType="int">
+        select count(1) from edu_teacher_subject where subject_id = #{subjectId}
+    </select>
+    
+    <insert id="insertSubject" parameterType="Subject">
+        insert into edu_subject (
+			subject_code,
+			subject_name,
+			<if test="remark != null and remark != ''">remark,</if>
+			<if test="createBy != null and createBy != ''">create_by,</if>
+ 			create_time
+        )values(
+			#{subjectCode},
+			#{subjectName},
+			<if test="remark != null and remark != ''">#{remark},</if>
+			<if test="createBy != null and createBy != ''">#{createBy},</if>
+ 			sysdate()
+		)
+    </insert>
+	 
+    <update id="updateSubject" parameterType="Subject">
+        update edu_subject 
+        <set>
+            <if test="subjectCode != null and subjectCode != ''">subject_code = #{subjectCode},</if>
+            <if test="subjectName != null and subjectName != ''">subject_name = #{subjectName},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+ 			update_time = sysdate()
+        </set>
+        where id = #{id}
+    </update>
+	
+    <delete id="deleteSubjectById" parameterType="Long">
+        delete from  edu_subject where id = #{id}
+    </delete>
+    
+    <delete id="deleteSubjectByIds" parameterType="Long">
+        delete from edu_subject where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+        	#{id}
+        </foreach>
+    </delete>
+    
+</mapper>
