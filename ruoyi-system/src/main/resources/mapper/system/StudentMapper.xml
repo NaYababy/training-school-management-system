@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.StudentMapper">
+
+    <resultMap type="Student" id="StudentResult">
+    	<id     property="id"               column="id"               />
+        <result property="studentName"      column="student_name"      />
+        <result property="grade"            column="grade"            />
+        <result property="gender"           column="gender"           />
+        <result property="phone"            column="phone"            />
+        <result property="totalHours"       column="total_hours"       />
+        <result property="remainingHours"   column="remaining_hours"   />
+        <result property="totalFee"         column="total_fee"         />
+        <result property="createBy"         column="create_by"         />
+        <result property="createTime"       column="create_time"       />
+        <result property="updateBy"         column="update_by"         />
+        <result property="updateTime"       column="update_time"       />
+        <result property="remark"           column="remark"           />
+    </resultMap>
+    
+    <sql id="selectStudentVo">
+        select id, student_name, grade, gender, phone, total_hours, remaining_hours, total_fee, create_by, create_time, update_by, update_time, remark 
+		from edu_student
+    </sql>
+    
+    <select id="selectStudentById" parameterType="Long" resultMap="StudentResult">
+        <include refid="selectStudentVo"/>
+        where id = #{id}
+    </select>
+    
+    <select id="selectStudentByPhone" parameterType="String" resultMap="StudentResult">
+        <include refid="selectStudentVo"/>
+        where phone = #{phone}
+    </select>
+    
+    <select id="selectStudentList" parameterType="Student" resultMap="StudentResult">
+        <include refid="selectStudentVo"/>
+        <where>
+			<if test="studentName != null and studentName != ''">
+				AND student_name like concat('%', #{studentName}, '%')
+			</if>
+			<if test="grade != null and grade != ''">
+				AND grade like concat('%', #{grade}, '%')
+			</if>
+			<if test="gender != null and gender != ''">
+				AND gender = #{gender}
+			</if>
+			<if test="phone != null and phone != ''">
+				AND phone = #{phone}
+			</if>
+			<if test="remainingHours != null">
+				AND remaining_hours = #{remainingHours}
+			</if>
+			<if test="params.beginTime != null and params.beginTime != ''">
+				and date_format(create_time,'%Y%m%d') >= date_format(#{params.beginTime},'%Y%m%d')
+			</if>
+			<if test="params.endTime != null and params.endTime != ''">
+				and date_format(create_time,'%Y%m%d') <= date_format(#{params.endTime},'%Y%m%d')
+			</if>
+		</where>
+        order by create_time desc
+    </select>
+    
+    <select id="checkPhoneUnique" parameterType="String" resultType="int">
+        select count(1) from edu_student where phone = #{phone}
+    </select>
+    
+    <select id="countStudentBySubjectId" parameterType="Long" resultType="int">
+        select count(1) from edu_student_subject where subject_id = #{subjectId}
+    </select>
+    
+    <insert id="insertStudent" parameterType="Student">
+        insert into edu_student (
+			student_name,
+			grade,
+			gender,
+			phone,
+			total_hours,
+			remaining_hours,
+			total_fee,
+			<if test="createBy != null and createBy != ''">create_by,</if>
+			<if test="remark != null and remark != ''">remark,</if>
+ 			create_time
+        )values(
+			#{studentName},
+			#{grade},
+			#{gender},
+			#{phone},
+			#{totalHours},
+			#{remainingHours},
+			#{totalFee},
+			<if test="createBy != null and createBy != ''">#{createBy},</if>
+			<if test="remark != null and remark != ''">#{remark},</if>
+ 			sysdate()
+		)
+    </insert>
+	 
+    <update id="updateStudent" parameterType="Student">
+        update edu_student 
+        <set>
+            <if test="studentName != null and studentName != ''">student_name = #{studentName},</if>
+            <if test="grade != null and grade != ''">grade = #{grade},</if>
+            <if test="gender != null and gender != ''">gender = #{gender},</if>
+            <if test="phone != null and phone != ''">phone = #{phone},</if>
+            <if test="totalHours != null">total_hours = #{totalHours},</if>
+            <if test="remainingHours != null">remaining_hours = #{remainingHours},</if>
+            <if test="totalFee != null">total_fee = #{totalFee},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+ 			update_time = sysdate()
+        </set>
+        where id = #{id}
+    </update>
+	
+    <delete id="deleteStudentById" parameterType="Long">
+        delete from edu_student where id = #{id}
+    </delete>
+    
+    <delete id="deleteStudentByIds" parameterType="Long[]">
+        delete from edu_student where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+        	#{id}
+        </foreach>
+    </delete>
+    
+</mapper>
