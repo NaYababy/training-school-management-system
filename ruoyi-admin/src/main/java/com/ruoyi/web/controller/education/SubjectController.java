@@ -1,4 +1,4 @@
-package com.ruoyi.web.controller.system;
+package com.ruoyi.web.controller.education;
 
 import java.util.List;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,13 +23,13 @@ import com.ruoyi.system.domain.Subject;
 import com.ruoyi.system.service.ISubjectService;
 
 @RestController
-@RequestMapping("/system/subject")
+@RequestMapping("/education/subject")
 public class SubjectController extends BaseController
 {
     @Autowired
     private ISubjectService subjectService;
 
-    @PreAuthorize("@ss.hasPermi('system:subject:list')")
+    @PreAuthorize("@ss.hasPermi('education:subject:list')")
     @GetMapping("/list")
     public TableDataInfo list(Subject subject)
     {
@@ -39,7 +39,7 @@ public class SubjectController extends BaseController
     }
 
     @Log(title = "科目管理", businessType = BusinessType.EXPORT)
-    @PreAuthorize("@ss.hasPermi('system:subject:export')")
+    @PreAuthorize("@ss.hasPermi('education:subject:export')")
     @PostMapping("/export")
     public void export(HttpServletResponse response, Subject subject)
     {
@@ -48,14 +48,14 @@ public class SubjectController extends BaseController
         util.exportExcel(response, list, "科目数据");
     }
 
-    @PreAuthorize("@ss.hasPermi('system:subject:query')")
+    @PreAuthorize("@ss.hasPermi('education:subject:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable Long id)
     {
         return success(subjectService.selectSubjectById(id));
     }
 
-    @PreAuthorize("@ss.hasPermi('system:subject:add')")
+    @PreAuthorize("@ss.hasPermi('education:subject:add')")
     @Log(title = "科目管理", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@Validated @RequestBody Subject subject)
@@ -72,7 +72,7 @@ public class SubjectController extends BaseController
         return toAjax(subjectService.insertSubject(subject));
     }
 
-    @PreAuthorize("@ss.hasPermi('system:subject:edit')")
+    @PreAuthorize("@ss.hasPermi('education:subject:edit')")
     @Log(title = "科目管理", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@Validated @RequestBody Subject subject)
@@ -89,7 +89,7 @@ public class SubjectController extends BaseController
         return toAjax(subjectService.updateSubject(subject));
     }
 
-    @PreAuthorize("@ss.hasPermi('system:subject:remove')")
+    @PreAuthorize("@ss.hasPermi('education:subject:remove')")
     @Log(title = "科目管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)

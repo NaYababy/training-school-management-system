@@ -22,12 +22,15 @@ INSERT INTO `edu_subject` (`subject_code`, `subject_name`, `remark`) VALUES
 ('CHEMISTRY', '化学', '化学科目'),
 ('BIOLOGY', '生物', '生物科目');
 
--- 科目管理菜单
-INSERT INTO `sys_menu` VALUES('118', '科目管理', '1', '10', 'subject', 'system/subject/index', '', '', 1, 0, 'C', '0', '0', 'system:subject:list', 'education', 'admin', sysdate(), '', null, '科目管理菜单');
+-- 培训管理一级菜单
+INSERT INTO `sys_menu` VALUES('5', '培训管理', '0', '5', 'education', null, '', '', 1, 0, 'M', '0', '0', '', 'education', 'admin', sysdate(), '', null, '培训管理目录');
+
+-- 科目管理二级菜单
+INSERT INTO `sys_menu` VALUES('500', '科目管理', '5', '1', 'subject', 'education/subject/index', '', '', 1, 0, 'C', '0', '0', 'education:subject:list', 'education', 'admin', sysdate(), '', null, '科目管理菜单');
 
 -- 科目管理按钮权限
-INSERT INTO `sys_menu` VALUES('2000', '科目查询', '118', '1', '', '', '', '', 1, 0, 'F', '0', '0', 'system:subject:query', '#', 'admin', sysdate(), '', null, '');
-INSERT INTO `sys_menu` VALUES('2001', '科目新增', '118', '2', '', '', '', '', 1, 0, 'F', '0', '0', 'system:subject:add', '#', 'admin', sysdate(), '', null, '');
-INSERT INTO `sys_menu` VALUES('2002', '科目修改', '118', '3', '', '', '', '', 1, 0, 'F', '0', '0', 'system:subject:edit', '#', 'admin', sysdate(), '', null, '');
-INSERT INTO `sys_menu` VALUES('2003', '科目删除', '118', '4', '', '', '', '', 1, 0, 'F', '0', '0', 'system:subject:remove', '#', 'admin', sysdate(), '', null, '');
-INSERT INTO `sys_menu` VALUES('2004', '科目导出', '118', '5', '', '', '', '', 1, 0, 'F', '0', '0', 'system:subject:export', '#', 'admin', sysdate(), '', null, '');
+INSERT INTO `sys_menu` VALUES('5000', '科目查询', '500', '1', '', '', '', '', 1, 0, 'F', '0', '0', 'education:subject:query', '#', 'admin', sysdate(), '', null, '');
+INSERT INTO `sys_menu` VALUES('5001', '科目新增', '500', '2', '', '', '', '', 1, 0, 'F', '0', '0', 'education:subject:add', '#', 'admin', sysdate(), '', null, '');
+INSERT INTO `sys_menu` VALUES('5002', '科目修改', '500', '3', '', '', '', '', 1, 0, 'F', '0', '0', 'education:subject:edit', '#', 'admin', sysdate(), '', null, '');
+INSERT INTO `sys_menu` VALUES('5003', '科目删除', '500', '4', '', '', '', '', 1, 0, 'F', '0', '0', 'education:subject:remove', '#', 'admin', sysdate(), '', null, '');
+INSERT INTO `sys_menu` VALUES('5004', '科目导出', '500', '5', '', '', '', '', 1, 0, 'F', '0', '0', 'education:subject:export', '#', 'admin', sysdate(), '', null, '');

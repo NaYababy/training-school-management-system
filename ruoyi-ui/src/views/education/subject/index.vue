@@ -33,7 +33,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['system:subject:add']"
+          v-hasPermi="['education:subject:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -44,7 +44,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['system:subject:edit']"
+          v-hasPermi="['education:subject:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -55,7 +55,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['system:subject:remove']"
+          v-hasPermi="['education:subject:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -65,7 +65,7 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['system:subject:export']"
+          v-hasPermi="['education:subject:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
@@ -88,14 +88,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['system:subject:edit']"
+            v-hasPermi="['education:subject:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['system:subject:remove']"
+            v-hasPermi="['education:subject:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -130,7 +130,7 @@
 </template>
 
 <script>
-import { listSubject, getSubject, delSubject, addSubject, updateSubject } from "@/api/system/subject"
+import { listSubject, getSubject, delSubject, addSubject, updateSubject } from "@/api/education/subject"
 
 export default {
   name: "Subject",
@@ -244,7 +244,7 @@ export default {
       }).catch(() => {})
     },
     handleExport() {
-      this.download('system/subject/export', {
+      this.download('education/subject/export', {
         ...this.queryParams
       }, `subject_${new Date().getTime()}.xlsx`)
     }
