@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.TeacherSubjectMapper">
+
+    <resultMap type="TeacherSubject" id="TeacherSubjectResult">
+        <id property="id" column="id"/>
+        <result property="teacherId" column="teacher_id"/>
+        <result property="subjectId" column="subject_id"/>
+        <result property="isMain" column="is_main"/>
+        <result property="subjectName" column="subject_name"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <sql id="selectTeacherSubjectVo">
+        select ts.id, ts.teacher_id, ts.subject_id, ts.is_main, ts.create_time, s.subject_name
+        from edu_teacher_subject ts
+        left join edu_subject s on ts.subject_id = s.id
+    </sql>
+
+    <select id="selectTeacherSubjectById" parameterType="Long" resultMap="TeacherSubjectResult">
+        <include refid="selectTeacherSubjectVo"/>
+        where ts.id = #{id}
+    </select>
+
+    <select id="selectTeacherSubjectList" parameterType="TeacherSubject" resultMap="TeacherSubjectResult">
+        <include refid="selectTeacherSubjectVo"/>
+        <where>
+            <if test="teacherId != null">
+                AND ts.teacher_id = #{teacherId}
+            </if>
+            <if test="subjectId != null">
+                AND ts.subject_id = #{subjectId}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectTeacherSubjectByTeacherId" parameterType="Long" resultMap="TeacherSubjectResult">
+        <include refid="selectTeacherSubjectVo"/>
+        where ts.teacher_id = #{teacherId}
+    </select>
+
+    <select id="checkUnique" parameterType="TeacherSubject" resultType="int">
+        select count(1) from edu_teacher_subject where teacher_id = #{teacherId} and subject_id = #{subjectId}
+    </select>
+
+    <insert id="insertTeacherSubject" parameterType="TeacherSubject">
+        insert into edu_teacher_subject (teacher_id, subject_id, is_main, create_time)
+        values(#{teacherId}, #{subjectId}, #{isMain}, sysdate())
+    </insert>
+
+    <update id="updateTeacherSubject" parameterType="TeacherSubject">
+        update edu_teacher_subject set
+        subject_id = #{subjectId},
+        is_main = #{isMain}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTeacherSubjectById" parameterType="Long">
+        delete from edu_teacher_subject where id = #{id}
+    </delete>
+
+    <delete id="deleteTeacherSubjectByTeacherId" parameterType="Long">
+        delete from edu_teacher_subject where teacher_id = #{teacherId}
+    </delete>
+
+    <delete id="deleteTeacherSubjectBySubjectId" parameterType="Long">
+        delete from edu_teacher_subject where subject_id = #{subjectId}
+    </delete>
+
+</mapper>
