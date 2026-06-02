@@ -15,4 +15,6 @@ public interface IEducationStatisticsService
     Map<String, Object> getTeacherStatistics();
 
     Map<String, Object> getStudentStatistics();
+
+    Map<String, Object> getDashboardStatistics();
 }

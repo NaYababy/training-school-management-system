@@ -66,4 +66,10 @@ public class StatisticsController extends BaseController
     {
         return success(educationStatisticsService.getStudentStatistics());
     }
+
+    @GetMapping("/dashboard")
+    public AjaxResult getDashboardStatistics()
+    {
+        return success(educationStatisticsService.getDashboardStatistics());
+    }
 }

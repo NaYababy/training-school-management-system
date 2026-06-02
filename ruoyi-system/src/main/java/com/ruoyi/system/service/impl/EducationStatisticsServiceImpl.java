@@ -10,8 +10,11 @@ import com.ruoyi.system.domain.CancellationRecord;
 import com.ruoyi.system.domain.Student;
 import com.ruoyi.system.domain.Teacher;
 import com.ruoyi.system.mapper.CancellationRecordMapper;
+import com.ruoyi.system.mapper.ClassroomMapper;
+import com.ruoyi.system.mapper.CourseScheduleMapper;
 import com.ruoyi.system.mapper.StudentMapper;
 import com.ruoyi.system.mapper.StudentSubjectMapper;
+import com.ruoyi.system.mapper.SubjectMapper;
 import com.ruoyi.system.mapper.TeacherMapper;
 import com.ruoyi.system.mapper.TeacherSubjectMapper;
 import com.ruoyi.system.service.IEducationStatisticsService;
@@ -33,6 +36,15 @@ public class EducationStatisticsServiceImpl implements IEducationStatisticsServi
 
     @Autowired
     private TeacherSubjectMapper teacherSubjectMapper;
+
+    @Autowired
+    private SubjectMapper subjectMapper;
+
+    @Autowired
+    private ClassroomMapper classroomMapper;
+
+    @Autowired
+    private CourseScheduleMapper courseScheduleMapper;
 
     @Override
     public Map<String, Object> getDailyStatistics(String date)
@@ -164,6 +176,31 @@ public class EducationStatisticsServiceImpl implements IEducationStatisticsServi
         result.put("totalHours", totalHours);
         result.put("remainingHours", remainingHours);
         result.put("canceledHours", canceledHours);
+        
+        return result;
+    }
+
+    @Override
+    public Map<String, Object> getDashboardStatistics()
+    {
+        Map<String, Object> result = new HashMap<>();
+        
+        int studentCount = studentMapper.selectStudentList(new Student()).size();
+        int subjectCount = subjectMapper.selectSubjectList(null).size();
+        int teacherCount = teacherMapper.selectTeacherList(new Teacher()).size();
+        int classroomCount = classroomMapper.selectClassroomList(null).size();
+        
+        List<Student> students = studentMapper.selectStudentList(new Student());
+        BigDecimal totalFee = students.stream()
+            .map(Student::getTotalFee)
+            .filter(fee -> fee != null)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+        
+        result.put("studentCount", studentCount);
+        result.put("subjectCount", subjectCount);
+        result.put("teacherCount", teacherCount);
+        result.put("classroomCount", classroomCount);
+        result.put("totalFee", totalFee);
         
         return result;
     }

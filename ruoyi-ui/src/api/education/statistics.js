@@ -51,3 +51,10 @@ export function getOverview() {
     method: 'get'
   })
 }
+
+export function getDashboardStatistics() {
+  return request({
+    url: '/education/statistics/dashboard',
+    method: 'get'
+  })
+}

@@ -59,11 +59,7 @@
             </div>
             <div class="stat-info">
               <div class="stat-label">学生总数</div>
-              <div class="stat-value">1,268</div>
-              <div class="stat-change positive">
-                <span class="arrow">↑</span>
-                <span>较昨日 +12</span>
-              </div>
+              <div class="stat-value">{{ dashboardStats.studentCount }}</div>
             </div>
           </div>
         </el-col>
@@ -73,12 +69,8 @@
               <span class="icon">📚</span>
             </div>
             <div class="stat-info">
-              <div class="stat-label">课程总数</div>
-              <div class="stat-value">86</div>
-              <div class="stat-change positive">
-                <span class="arrow">↑</span>
-                <span>较昨日 +5</span>
-              </div>
+              <div class="stat-label">科目总数</div>
+              <div class="stat-value">{{ dashboardStats.subjectCount }}</div>
             </div>
           </div>
         </el-col>
@@ -89,11 +81,7 @@
             </div>
             <div class="stat-info">
               <div class="stat-label">教师总数</div>
-              <div class="stat-value">48</div>
-              <div class="stat-change positive">
-                <span class="arrow">↑</span>
-                <span>较昨日 +2</span>
-              </div>
+              <div class="stat-value">{{ dashboardStats.teacherCount }}</div>
             </div>
           </div>
         </el-col>
@@ -103,12 +91,8 @@
               <span class="icon">💰</span>
             </div>
             <div class="stat-info">
-              <div class="stat-label">本月收款(元)</div>
-              <div class="stat-value">128,560</div>
-              <div class="stat-change positive">
-                <span class="arrow">↑</span>
-                <span>较上月 +8.6%</span>
-              </div>
+              <div class="stat-label">累计缴费(元)</div>
+              <div class="stat-value">{{ dashboardStats.totalFee }}</div>
             </div>
           </div>
         </el-col>
@@ -216,6 +200,8 @@
 </template>
 
 <script>
+import { getDashboardStatistics } from "@/api/education/statistics"
+
 export default {
   name: "Index",
   data() {
@@ -223,6 +209,13 @@ export default {
       currentTime: "",
       currentDate: "",
       welcomeText: "",
+      dashboardStats: {
+        studentCount: 0,
+        subjectCount: 0,
+        teacherCount: 0,
+        classroomCount: 0,
+        totalFee: 0
+      },
       noticeList: [
         { title: "关于2025年暑期课程安排的通知", date: "05-20" },
         { title: "关于2025年暑期课程安排的通知", date: "05-20" },
@@ -261,9 +254,17 @@ export default {
   },
   mounted() {
     this.updateTime()
+    this.loadDashboardStats()
     setInterval(this.updateTime, 1000)
   },
   methods: {
+    loadDashboardStats() {
+      getDashboardStatistics().then(response => {
+        if (response.data) {
+          this.dashboardStats = response.data
+        }
+      })
+    },
     updateTime() {
       const now = new Date()
       const hour = now.getHours()
