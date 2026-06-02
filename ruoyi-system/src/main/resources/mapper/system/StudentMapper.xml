@@ -99,4 +99,10 @@
         </foreach>
     </delete>
 
+    <update id="updateStudentRemainingHours" parameterType="Map">
+        update edu_student 
+        set remaining_hours = remaining_hours + #{hours}
+        where id = #{studentId}
+    </update>
+
 </mapper>

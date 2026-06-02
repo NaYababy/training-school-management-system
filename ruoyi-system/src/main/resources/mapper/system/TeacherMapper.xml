@@ -83,4 +83,12 @@
         </foreach>
     </delete>
 
+    <select id="selectTeachersBySubject" parameterType="Long" resultMap="TeacherResult">
+        select t.id, t.teacher_name, t.password, t.phone, t.commission_rate, t.create_by, t.create_time, t.update_by, t.update_time, t.remark
+        from edu_teacher t
+        inner join edu_teacher_subject ts on t.id = ts.teacher_id
+        where ts.subject_id = #{subjectId}
+        order by t.create_time desc
+    </select>
+
 </mapper>

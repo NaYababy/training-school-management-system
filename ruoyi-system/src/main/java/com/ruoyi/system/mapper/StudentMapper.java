@@ -22,4 +22,6 @@ public interface StudentMapper
     int checkPhoneUnique(String phone);
 
     int countStudentBySubjectId(Long subjectId);
+
+    int updateStudentRemainingHours(Long studentId, Integer hours);
 }

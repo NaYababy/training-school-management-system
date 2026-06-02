@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ClassroomMapper">
+
+    <resultMap type="Classroom" id="ClassroomResult">
+        <id property="id" column="id"/>
+        <result property="classroomCode" column="classroom_code"/>
+        <result property="classroomName" column="classroom_name"/>
+        <result property="floor" column="floor"/>
+        <result property="capacity" column="capacity"/>
+        <result property="facilities" column="facilities"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectClassroomVo">
+        select id, classroom_code, classroom_name, floor, capacity, facilities, status, create_time, update_time from edu_classroom
+    </sql>
+
+    <select id="selectClassroomById" parameterType="Long" resultMap="ClassroomResult">
+        <include refid="selectClassroomVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectClassroomList" parameterType="Classroom" resultMap="ClassroomResult">
+        <include refid="selectClassroomVo"/>
+        <where>
+            <if test="classroomCode != null and classroomCode != ''">
+                AND classroom_code like concat('%', #{classroomCode}, '%')
+            </if>
+            <if test="classroomName != null and classroomName != ''">
+                AND classroom_name like concat('%', #{classroomName}, '%')
+            </if>
+            <if test="floor != null and floor != ''">
+                AND floor = #{floor}
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="checkClassroomCodeUnique" parameterType="String" resultType="int">
+        select count(1) from edu_classroom where classroom_code = #{classroomCode}
+    </select>
+
+    <insert id="insertClassroom" parameterType="Classroom" useGeneratedKeys="true" keyProperty="id">
+        insert into edu_classroom (classroom_code, classroom_name, floor, capacity, facilities, status, create_time)
+        values(#{classroomCode}, #{classroomName}, #{floor}, #{capacity}, #{facilities}, #{status}, sysdate())
+    </insert>
+
+    <update id="updateClassroom" parameterType="Classroom">
+        update edu_classroom set
+        classroom_code = #{classroomCode},
+        classroom_name = #{classroomName},
+        floor = #{floor},
+        capacity = #{capacity},
+        facilities = #{facilities},
+        status = #{status},
+        update_time = sysdate()
+        where id = #{id}
+    </update>
+
+    <delete id="deleteClassroomById" parameterType="Long">
+        delete from edu_classroom where id = #{id}
+    </delete>
+
+    <delete id="deleteClassroomByIds" parameterType="Long">
+        delete from edu_classroom where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -51,3 +51,10 @@ export function getAllTeachers() {
     method: 'get'
   })
 }
+
+export function getTeachersBySubject(subjectId) {
+  return request({
+    url: '/education/teacher/bySubject/' + subjectId,
+    method: 'get'
+  })
+}

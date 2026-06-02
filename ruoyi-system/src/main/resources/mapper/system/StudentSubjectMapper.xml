@@ -100,4 +100,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         delete from edu_student_subject where subject_id = #{subjectId}
     </delete>
     
+    <select id="selectStudentSubjectByStudentAndSubject" parameterType="Map" resultMap="StudentSubjectResult">
+        <include refid="selectStudentSubjectVo"/>
+        where ss.student_id = #{studentId} and ss.subject_id = #{subjectId}
+    </select>
+    
 </mapper>

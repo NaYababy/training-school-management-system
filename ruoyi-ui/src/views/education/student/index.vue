@@ -156,7 +156,7 @@
           <el-table :data="form.subjectList" border>
             <el-table-column label="科目" width="120">
               <template slot-scope="scope">
-                <el-select v-model="scope.row.subjectId" placeholder="请选择科目">
+                <el-select v-model="scope.row.subjectId" placeholder="请选择科目" @change="handleSubjectChange(scope.row, scope.$index)">
                   <el-option v-for="subject in subjectOptions" :key="subject.id" :label="subject.subjectName" :value="subject.id" />
                 </el-select>
               </template>
@@ -164,7 +164,7 @@
             <el-table-column label="教师" width="120">
               <template slot-scope="scope">
                 <el-select v-model="scope.row.teacherId" placeholder="请选择教师">
-                  <el-option v-for="teacher in teacherOptions" :key="teacher.id" :label="teacher.teacherName" :value="teacher.id" />
+                  <el-option v-for="teacher in teacherOptions[scope.row.subjectId] || []" :key="teacher.id" :label="teacher.teacherName" :value="teacher.id" />
                 </el-select>
               </template>
             </el-table-column>
@@ -206,6 +206,7 @@
 <script>
 import { listStudent, getStudent, delStudent, addStudent, updateStudent } from "@/api/education/student"
 import { getAllSubjects } from "@/api/education/subject"
+import { getAllTeachers, getTeachersBySubject } from "@/api/education/teacher"
 
 export default {
   name: "Student",
@@ -223,7 +224,8 @@ export default {
       subjectDialogOpen: false,
       subjectList: [],
       subjectOptions: [],
-      teacherOptions: [],
+      teacherOptions: {},
+      allTeachers: [],
       queryParams: {
         pageNum: 1,
         pageSize: 10,
@@ -268,7 +270,31 @@ export default {
       getAllSubjects().then(response => {
         this.subjectOptions = response.data
       })
-      this.teacherOptions = []
+      getAllTeachers().then(response => {
+        this.allTeachers = response.data
+      })
+    },
+    getTeachersBySubjectId(subjectId) {
+      if (!subjectId) {
+        return []
+      }
+      if (this.teacherOptions[subjectId]) {
+        return this.teacherOptions[subjectId]
+      }
+      getTeachersBySubject(subjectId).then(response => {
+        this.$set(this.teacherOptions, subjectId, response.data)
+      })
+      return []
+    },
+    handleSubjectChange(row, index) {
+      row.teacherId = null
+      if (row.subjectId) {
+        if (!this.teacherOptions[row.subjectId]) {
+          getTeachersBySubject(row.subjectId).then(response => {
+            this.$set(this.teacherOptions, row.subjectId, response.data)
+          })
+        }
+      }
     },
     cancel() {
       this.open = false
@@ -313,6 +339,14 @@ export default {
         this.form = response.data
         if (!this.form.subjectList || this.form.subjectList.length === 0) {
           this.form.subjectList = [{ subjectId: null, teacherId: null, subjectHours: 0 }]
+        } else {
+          this.form.subjectList.forEach(subject => {
+            if (subject.subjectId && !this.teacherOptions[subject.subjectId]) {
+              getTeachersBySubject(subject.subjectId).then(res => {
+                this.$set(this.teacherOptions, subject.subjectId, res.data)
+              })
+            }
+          })
         }
         this.open = true
         this.title = "修改学生"

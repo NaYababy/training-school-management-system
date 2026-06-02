@@ -24,4 +24,6 @@ public interface StudentSubjectMapper
     int updateSubjectRemainingHours(StudentSubject studentSubject);
 
     int checkUnique(StudentSubject studentSubject);
+
+    StudentSubject selectStudentSubjectByStudentAndSubject(Long studentId, Long subjectId);
 }

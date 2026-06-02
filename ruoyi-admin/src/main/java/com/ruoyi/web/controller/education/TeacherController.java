@@ -105,4 +105,10 @@ public class TeacherController extends BaseController
     {
         return success(teacherService.selectAllTeachers());
     }
+
+    @GetMapping("/bySubject/{subjectId}")
+    public AjaxResult getTeachersBySubject(@PathVariable Long subjectId)
+    {
+        return success(teacherService.selectTeachersBySubject(subjectId));
+    }
 }

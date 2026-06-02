@@ -144,4 +144,10 @@ public class TeacherServiceImpl implements ITeacherService
     {
         return teacherMapper.selectTeacherList(new Teacher());
     }
+
+    @Override
+    public List<Teacher> selectTeachersBySubject(Long subjectId)
+    {
+        return teacherMapper.selectTeachersBySubject(subjectId);
+    }
 }

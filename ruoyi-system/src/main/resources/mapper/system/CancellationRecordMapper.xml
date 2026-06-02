@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.CancellationRecordMapper">
+
+    <resultMap type="CancellationRecord" id="CancellationRecordResult">
+        <id property="id" column="id"/>
+        <result property="studentId" column="student_id"/>
+        <result property="subjectId" column="subject_id"/>
+        <result property="teacherId" column="teacher_id"/>
+        <result property="cancelHours" column="cancel_hours"/>
+        <result property="cancelTime" column="cancel_time"/>
+        <result property="photoUrl" column="photo_url"/>
+        <result property="remark" column="remark"/>
+        <result property="studentName" column="student_name"/>
+        <result property="subjectName" column="subject_name"/>
+        <result property="teacherName" column="teacher_name"/>
+    </resultMap>
+
+    <sql id="selectRecordVo">
+        select cr.id, cr.student_id, cr.subject_id, cr.teacher_id, cr.cancel_hours, 
+               cr.cancel_time, cr.photo_url, cr.remark,
+               s.student_name, sub.subject_name, t.teacher_name
+        from edu_cancellation_record cr
+        left join edu_student s on cr.student_id = s.id
+        left join edu_subject sub on cr.subject_id = sub.id
+        left join edu_teacher t on cr.teacher_id = t.id
+    </sql>
+
+    <select id="selectCancellationRecordById" parameterType="Long" resultMap="CancellationRecordResult">
+        <include refid="selectRecordVo"/>
+        where cr.id = #{id}
+    </select>
+
+    <select id="selectCancellationRecordList" parameterType="CancellationRecord" resultMap="CancellationRecordResult">
+        <include refid="selectRecordVo"/>
+        <where>
+            <if test="studentId != null">
+                AND cr.student_id = #{studentId}
+            </if>
+            <if test="subjectId != null">
+                AND cr.subject_id = #{subjectId}
+            </if>
+            <if test="teacherId != null">
+                AND cr.teacher_id = #{teacherId}
+            </if>
+            <if test="studentName != null and studentName != ''">
+                AND s.student_name like concat('%', #{studentName}, '%')
+            </if>
+            <if test="subjectName != null and subjectName != ''">
+                AND sub.subject_name like concat('%', #{subjectName}, '%')
+            </if>
+            <if test="teacherName != null and teacherName != ''">
+                AND t.teacher_name like concat('%', #{teacherName}, '%')
+            </if>
+            <if test="params.beginTime != null and params.beginTime != ''">
+                and date_format(cr.cancel_time,'%Y%m%d') &gt;= date_format(#{params.beginTime},'%Y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''">
+                and date_format(cr.cancel_time,'%Y%m%d') &lt;= date_format(#{params.endTime},'%Y%m%d')
+            </if>
+        </where>
+        order by cr.cancel_time desc
+    </select>
+
+    <insert id="insertCancellationRecord" parameterType="CancellationRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into edu_cancellation_record (student_id, subject_id, teacher_id, cancel_hours, cancel_time, photo_url, remark, create_time)
+        values(#{studentId}, #{subjectId}, #{teacherId}, #{cancelHours}, #{cancelTime}, #{photoUrl}, #{remark}, sysdate())
+    </insert>
+
+    <update id="updateCancellationRecord" parameterType="CancellationRecord">
+        update edu_cancellation_record set
+        cancel_hours = #{cancelHours},
+        remark = #{remark}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCancellationRecordById" parameterType="Long">
+        delete from edu_cancellation_record where id = #{id}
+    </delete>
+
+    <delete id="deleteCancellationRecordByIds" parameterType="Long">
+        delete from edu_cancellation_record where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="countByStudentId" parameterType="Long" resultType="int">
+        select count(1) from edu_cancellation_record where student_id = #{studentId}
+    </select>
+
+    <select id="countBySubjectId" parameterType="Long" resultType="int">
+        select count(1) from edu_cancellation_record where subject_id = #{subjectId}
+    </select>
+
+    <select id="countByTeacherId" parameterType="Long" resultType="int">
+        select count(1) from edu_cancellation_record where teacher_id = #{teacherId}
+    </select>
+
+</mapper>

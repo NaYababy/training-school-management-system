@@ -33,4 +33,6 @@ public interface ITeacherService
     void saveTeacherWithSubjects(Teacher teacher);
 
     List<Teacher> selectAllTeachers();
+
+    List<Teacher> selectTeachersBySubject(Long subjectId);
 }

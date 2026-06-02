@@ -20,4 +20,6 @@ public interface TeacherMapper
     int deleteTeacherByIds(Long[] ids);
 
     int checkPhoneUnique(String phone);
+
+    List<Teacher> selectTeachersBySubject(Long subjectId);
 }
